@@ -21,7 +21,7 @@ public class Battle {
 	private int[] actualNumberUnitsPlanet, actualNumberUnitsEnemy;
 	
 	
-	private void start() {
+	public void start() {
 		
 	}
 }
