@@ -4,6 +4,12 @@ import game.units.Variables;
 
 public class UnitStats implements Variables {
 	
+	// devuelve si la probabilidad se ha cumplido
+	public static boolean rand(int prob) {
+		return Math.random()*100 < prob;
+	}
+	
+	
 	// calcular armadura final con el tipo de tropa y nivel de la tecnología
 	public static int calculateArmor(UnitType type, int defenseTech) {
 		int base, plus;
@@ -84,4 +90,5 @@ public class UnitStats implements Variables {
 		
 		return base + (attackTech*plus * base) / 100;
 	}
+	
 }

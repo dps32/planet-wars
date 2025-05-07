@@ -20,5 +20,8 @@ public class Battle {
 	private int[][] initialArmies; // cantidad de tropas
 	private int[] actualNumberUnitsPlanet, actualNumberUnitsEnemy;
 	
-
+	
+	private void start() {
+		
+	}
 }
