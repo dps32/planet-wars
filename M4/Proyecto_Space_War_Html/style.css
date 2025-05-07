@@ -1,0 +1,320 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #111;
+  color: #fff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* NAVBAR */
+.navbar {
+  background-color: #222;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+}
+
+.nav-block {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 2px solid transparent; /* Borde invisible por defecto */
+  transition: border-color 0.3s ease; /* Transición suave */
+}
+
+.nav-block:hover {
+  border-color: #00f5d4; /* Borde azul al pasar el ratón */
+}
+
+.nav-link {
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #00f5d4;
+}
+
+.logo-block {
+  overflow: visible;
+}
+
+.nav-logo {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 200px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+/* HERO */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-image: url('img/foto2.png');
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  min-height: 80vh;
+}
+
+.hero .content {
+  margin-bottom: 4rem; 
+  max-width: 600px;  
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* TÍTULO PRINCIPAL - BRILLO */
+#titulo-brillante {
+  font-size: 60px;
+  background: linear-gradient(90deg, #ffffff, #ffd700, #ffffff);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brillo 3s linear infinite; /* Efecto de brillo */
+}
+
+/* PÁRRAFO CON SOMBRA */
+.hero p {
+  font-size: 1.2rem;
+  margin: 1rem 0 3rem; /* ↑ Aumentamos el margen inferior a 3rem */
+  text-shadow: 0 0 5px #00f5d4, 0 0 10px #00f5d4;
+  transition: color 0.3s ease;
+}
+
+.hero p:hover {
+  color: #00f5d4;
+}
+
+.hero .btn {
+  padding: 1rem 2.5rem;
+  background-color: #00f5d4;
+  color: #111;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  transition: transform 0.2s;
+  margin-top: 2rem;
+}
+
+.hero .btn:hover {
+  transform: scale(1.1);
+}
+
+/* PERSONAJE ANIMADO */
+.animated-character {
+  width: 150px;
+  height: 150px;
+  background-image: url('img/personaje1.png');
+  background-size: cover;
+  animation: float 3s infinite ease-in-out;
+  margin-top: 2rem;
+}
+
+/* GALERÍA */
+.screenshots {
+  padding: 2rem;
+  background-color: #1a1a1a;
+  text-align: center;
+}
+
+.screenshots h2 {
+  margin-bottom: 1.5rem;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.gallery img {
+  width: 250px;
+  height: auto;
+  border-radius: 10px;
+  transition: transform 0.3s;
+}
+
+.gallery img:hover {
+  transform: scale(1.05);
+}
+
+/* FOOTER */
+footer {
+  background-color: #222;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ANIMACIONES */
+@keyframes brillo {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* TUTORIAL - igual que portada */
+.tutorial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-image: url('img/foto2.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 80vh;
+  text-align: center;
+}
+
+.tutorial-content {
+  max-width: 800px;
+  background-color: rgba(0, 0, 0, 0.6); /* fondo oscuro semitransparente para mejor lectura */
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.tutorial-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #00f5d4;
+}
+
+.tutorial-content h2 {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #ffd700;
+}
+
+.tutorial-content p,
+.tutorial-content ul {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+.tutorial-content ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+  text-align: left;
+}
+
+/* ABOUT US */
+.about-us {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-image: url('img/foto2.png');
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+  min-height: 80vh;
+  text-align: center;
+}
+
+.about-content h1 {
+  font-size: 2.5rem;
+  color: #00f5d4;
+  margin-bottom: 1.5rem;
+}
+
+.about-content p {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 3rem;
+}
+
+.team {
+  display: flex;
+  justify-content: center;
+  gap: 3rem; /* Ajustado el espacio entre los miembros */
+}
+
+.team-member {
+  text-align: center;
+  max-width: 350px; /* Ajusté el tamaño de cada miembro */
+}
+
+.team-photo {
+  width: 250px; /* Aumento de tamaño */
+  height: 250px; /* Aumento de tamaño */
+  object-fit: cover;
+  border-radius: 50%; /* Asegura que la foto sea circular */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 1rem;
+  border: 4px solid #000000; /* Borde verde brillante para las fotos */
+}
+
+.team-photo:hover {
+  transform: scale(1.1); /* Aumento en el tamaño al hacer hover */
+  box-shadow: 0 4px 15px rgba(1, 19, 16, 0.7); /* Efecto de sombra brillante */
+}
+
+.team-member h3 {
+  font-size: 1.3rem;
+  color: #ffd700;
+}
+
+.team-member p {
+  font-size: 1.1rem;
+  color: #fff;
+  line-height: 1.6;
+}
+
+
