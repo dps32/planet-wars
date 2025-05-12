@@ -29,6 +29,7 @@ a {
   justify-content: space-between;
   align-items: center;
   height: 100px;
+  padding: 0 1rem;
 }
 
 .nav-block {
@@ -38,12 +39,12 @@ a {
   align-items: center;
   justify-content: center;
   position: relative;
-  border: 2px solid transparent; /* Borde invisible por defecto */
-  transition: border-color 0.3s ease; /* Transición suave */
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
 }
 
 .nav-block:hover {
-  border-color: #00f5d4; /* Borde azul al pasar el ratón */
+  border-color: #00f5d4;
 }
 
 .nav-link {
@@ -87,13 +88,12 @@ a {
 }
 
 .hero .content {
-  margin-bottom: 4rem; 
-  max-width: 600px;  
+  margin-bottom: 4rem;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* TÍTULO PRINCIPAL - BRILLO */
 #titulo-brillante {
   font-size: 60px;
   background: linear-gradient(90deg, #ffffff, #ffd700, #ffffff);
@@ -101,15 +101,13 @@ a {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: brillo 3s linear infinite; /* Efecto de brillo */
+  animation: brillo 3s linear infinite;
 }
 
-/* PÁRRAFO CON SOMBRA */
 .hero p {
   font-size: 1.2rem;
-  margin: 1rem 0 3rem; /* ↑ Aumentamos el margen inferior a 3rem */
+  margin: 1rem 0 3rem;
   text-shadow: 0 0 5px #00f5d4, 0 0 10px #00f5d4;
-  transition: color 0.3s ease;
 }
 
 .hero p:hover {
@@ -131,7 +129,6 @@ a {
   transform: scale(1.1);
 }
 
-/* PERSONAJE ANIMADO */
 .animated-character {
   width: 150px;
   height: 150px;
@@ -197,17 +194,7 @@ footer {
   }
 }
 
-@keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* TUTORIAL - igual que portada */
+/* TUTORIAL */
 .tutorial {
   display: flex;
   flex-direction: column;
@@ -223,7 +210,7 @@ footer {
 
 .tutorial-content {
   max-width: 800px;
-  background-color: rgba(0, 0, 0, 0.6); /* fondo oscuro semitransparente para mejor lectura */
+  background-color: rgba(0, 0, 0, 0.6);
   padding: 2rem;
   border-radius: 10px;
 }
@@ -263,7 +250,7 @@ footer {
   background-image: url('img/foto2.png');
   background-size: cover;
   background-position: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+  background-color: rgba(0, 0, 0, 0.5);
   min-height: 80vh;
   text-align: center;
 }
@@ -283,27 +270,27 @@ footer {
 .team {
   display: flex;
   justify-content: center;
-  gap: 3rem; /* Ajustado el espacio entre los miembros */
+  gap: 3rem;
 }
 
 .team-member {
   text-align: center;
-  max-width: 350px; /* Ajusté el tamaño de cada miembro */
+  max-width: 350px;
 }
 
 .team-photo {
-  width: 250px; /* Aumento de tamaño */
-  height: 250px; /* Aumento de tamaño */
+  width: 250px;
+  height: 250px;
   object-fit: cover;
-  border-radius: 50%; /* Asegura que la foto sea circular */
+  border-radius: 50%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin-bottom: 1rem;
-  border: 4px solid #000000; /* Borde verde brillante para las fotos */
+  border: 4px solid #000000;
 }
 
 .team-photo:hover {
-  transform: scale(1.1); /* Aumento en el tamaño al hacer hover */
-  box-shadow: 0 4px 15px rgba(1, 19, 16, 0.7); /* Efecto de sombra brillante */
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(1, 19, 16, 0.7);
 }
 
 .team-member h3 {
@@ -316,7 +303,7 @@ footer {
   color: #fff;
   line-height: 1.6;
 }
-/* BATALLAS */
+
 /* BATALLAS */
 .batallas {
   display: flex;
@@ -373,12 +360,56 @@ footer {
 }
 
 .batallas-content button:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .error-message {
-  color: #ff4d4d;
+  color: #ff4c4c;
+  font-size: 1rem;
   margin-top: 1rem;
 }
 
+/* MEDIA QUERIES PARA RESPONSIVO */
+@media (max-width: 768px) {
+  .nav-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
 
+  .nav-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-logo {
+    height: 150px;
+  }
+
+  .hero {
+    padding: 3rem 1.5rem;
+  }
+
+  .screenshots .gallery {
+    flex-direction: column;
+  }
+
+  .about-content {
+    padding: 1rem;
+  }
+
+  .team {
+    flex-direction: column;
+  }
+
+  .team-member {
+    margin-bottom: 2rem;
+  }
+
+  .batallas-content {
+    width: 90%;
+  }
+
+  .tutorial-content {
+    max-width: 100%;
+  }
+}
