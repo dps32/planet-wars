@@ -3,17 +3,11 @@ package game.view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import game.core.GameLoop;
 import game.view.Components;
 
 public class GameUI {
 
-	private GameLoop controller;
 	private JFrame frame;
-
-	public GameUI(GameLoop controller) {
-		this.controller = controller;
-	}
 
 	public void init() {
 		frame = new JFrame("Planet Wars");
