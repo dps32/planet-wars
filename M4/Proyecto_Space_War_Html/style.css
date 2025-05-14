@@ -9,6 +9,7 @@
 body {
   background-color: #111;
   color: #fff;
+  overflow-x: hidden;
 }
 
 a {
@@ -150,15 +151,16 @@ a {
 }
 
 .gallery {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
   justify-content: center;
 }
 
 .gallery img {
-  width: 250px;
-  height: auto;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
   border-radius: 10px;
   transition: transform 0.3s;
 }
@@ -389,8 +391,8 @@ footer {
     padding: 3rem 1.5rem;
   }
 
-  .screenshots .gallery {
-    flex-direction: column;
+  .gallery {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
   .about-content {
