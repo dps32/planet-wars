@@ -8,7 +8,7 @@ import game.units.*;
 
 public class Planet implements Variables {
 	private int technologyDefense;
-	private int technologyAtack;
+	private int technologyAttack;
 	private int metal;
 	private int deuterium;
 	private int upgradeDefenseTechnologyDeuteriumCost;
@@ -16,10 +16,10 @@ public class Planet implements Variables {
 
 	private ArrayList<MilitaryUnit>[] army = new ArrayList[7];
 
-	public Planet(int technologyDefense, int technologyAtack, int metal, int deuterium) {
+	public Planet(int technologyDefense, int technologyAttack, int metal, int deuterium) {
 		super();
 		this.technologyDefense = technologyDefense;
-		this.technologyAtack = technologyAtack;
+		this.technologyAttack = technologyAttack;
 		this.metal = metal;
 		this.deuterium = deuterium;
 		this.upgradeDefenseTechnologyDeuteriumCost = UPGRADE_BASE_DEFENSE_TECHNOLOGY_DEUTERIUM_COST;
@@ -30,36 +30,26 @@ public class Planet implements Variables {
 		}
 	}
 
-	public void upgradeTechnologyDefense() {
-		try {
-			if (!canAfford(upgradeDefenseTechnologyDeuteriumCost)) throw new ResourceException();
+	public void upgradeTechnologyDefense() throws ResourceException {
+		if (!canAfford(upgradeDefenseTechnologyDeuteriumCost)) throw new ResourceException("No tienes recursos suficientes");
 
-			this.technologyDefense++;
-			this.deuterium -= upgradeDefenseTechnologyDeuteriumCost;
+		this.technologyDefense++;
+		this.deuterium -= upgradeDefenseTechnologyDeuteriumCost;
 
-			int baseCost = UPGRADE_BASE_DEFENSE_TECHNOLOGY_DEUTERIUM_COST;
-			int plus = UPGRADE_PLUS_DEFENSE_TECHNOLOGY_DEUTERIUM_COST * this.technologyDefense;
-			upgradeDefenseTechnologyDeuteriumCost = baseCost + (baseCost * plus) / 100;
-
-		} catch (Exception e) {
-			System.out.println("No tienes deuterio suficiente");
-		}
+		int baseCost = UPGRADE_BASE_DEFENSE_TECHNOLOGY_DEUTERIUM_COST;
+		int plus = UPGRADE_PLUS_DEFENSE_TECHNOLOGY_DEUTERIUM_COST * this.technologyDefense;
+		upgradeDefenseTechnologyDeuteriumCost = baseCost + (baseCost * plus) / 100;
 	}
 
-	public void upgradeTechnologyAttack() {
-		try {
-			if (!canAfford(upgradeAttackTechnologyDeuteriumCost)) throw new ResourceException();
+	public void upgradeTechnologyAttack() throws ResourceException {
+		if (!canAfford(upgradeAttackTechnologyDeuteriumCost)) throw new ResourceException("No tienes recursos suficientes");
 
-			this.technologyAtack++;
-			this.deuterium -= upgradeAttackTechnologyDeuteriumCost;
+		this.technologyAttack++;
+		this.deuterium -= upgradeAttackTechnologyDeuteriumCost;
 
-			int baseCost = UPGRADE_BASE_ATTACK_TECHNOLOGY_DEUTERIUM_COST;
-			int plus = UPGRADE_PLUS_ATTACK_TECHNOLOGY_DEUTERIUM_COST * this.technologyAtack;
-			upgradeAttackTechnologyDeuteriumCost = baseCost + (baseCost * plus) / 100;
-
-		} catch (Exception e) {
-			System.out.println("No tienes deuterio suficiente");
-		}
+		int baseCost = UPGRADE_BASE_ATTACK_TECHNOLOGY_DEUTERIUM_COST;
+		int plus = UPGRADE_PLUS_ATTACK_TECHNOLOGY_DEUTERIUM_COST * this.technologyAttack;
+		upgradeAttackTechnologyDeuteriumCost = baseCost + (baseCost * plus) / 100;
 	}
 
 	public void collect() {
@@ -74,7 +64,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_LIGTHHUNTER, DEUTERIUM_COST_LIGTHHUNTER)) break;
 			this.metal -= METAL_COST_LIGTHHUNTER;
 			this.deuterium -= DEUTERIUM_COST_LIGTHHUNTER;
-			army[0].add(new LightHunter(technologyDefense, technologyAtack));
+			army[0].add(new LightHunter(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -89,7 +79,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_HEAVYHUNTER, DEUTERIUM_COST_HEAVYHUNTER)) break;
 			this.metal -= METAL_COST_HEAVYHUNTER;
 			this.deuterium -= DEUTERIUM_COST_HEAVYHUNTER;
-			army[1].add(new HeavyHunter(technologyDefense, technologyAtack));
+			army[1].add(new HeavyHunter(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -104,7 +94,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_BATTLESHIP, DEUTERIUM_COST_BATTLESHIP)) break;
 			this.metal -= METAL_COST_BATTLESHIP;
 			this.deuterium -= DEUTERIUM_COST_BATTLESHIP;
-			army[2].add(new BattleShip(technologyDefense, technologyAtack));
+			army[2].add(new BattleShip(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -119,7 +109,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_ARMOREDSHIP, DEUTERIUM_COST_ARMOREDSHIP)) break;
 			this.metal -= METAL_COST_ARMOREDSHIP;
 			this.deuterium -= DEUTERIUM_COST_ARMOREDSHIP;
-			army[3].add(new ArmoredShip(technologyDefense, technologyAtack));
+			army[3].add(new ArmoredShip(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -134,7 +124,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_MISSILELAUNCHER, DEUTERIUM_COST_MISSILELAUNCHER)) break;
 			this.metal -= METAL_COST_MISSILELAUNCHER;
 			this.deuterium -= DEUTERIUM_COST_MISSILELAUNCHER;
-			army[4].add(new MissileLauncher(technologyDefense, technologyAtack));
+			army[4].add(new MissileLauncher(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -149,7 +139,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_IONCANNON, DEUTERIUM_COST_IONCANNON)) break;
 			this.metal -= METAL_COST_IONCANNON;
 			this.deuterium -= DEUTERIUM_COST_IONCANNON;
-			army[5].add(new IonCannon(technologyDefense, technologyAtack));
+			army[5].add(new IonCannon(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -164,7 +154,7 @@ public class Planet implements Variables {
 			if (!canAfford(METAL_COST_PLASMACANNON, DEUTERIUM_COST_PLASMACANNON)) break;
 			this.metal -= METAL_COST_PLASMACANNON;
 			this.deuterium -= DEUTERIUM_COST_PLASMACANNON;
-			army[6].add(new PlasmaCannon(technologyDefense, technologyAtack));
+			army[6].add(new PlasmaCannon(technologyDefense, technologyAttack));
 			built++;
 		}
 		if (built < n) {
@@ -178,7 +168,7 @@ public class Planet implements Variables {
 		System.out.println("Metal: " + metal);
 		System.out.println("Deuterio: " + deuterium);
 		System.out.println("Tecnología Defensa: " + technologyDefense);
-		System.out.println("Tecnología Ataque: " + technologyAtack);
+		System.out.println("Tecnología Ataque: " + technologyAttack);
 		System.out.println("Upgrade Defensa cost: " + upgradeDefenseTechnologyDeuteriumCost);
 		System.out.println("Upgrade Ataque cost: " + upgradeAttackTechnologyDeuteriumCost);
 		System.out.println("Ejército:");
@@ -222,4 +212,14 @@ public class Planet implements Variables {
 	public void setArmy(ArrayList<MilitaryUnit>[] army) {
 		this.army = army;
 	}
+
+	public int getTechnologyDefense() {
+		return technologyDefense;
+	}
+
+	public int getTechnologyAttack() {
+		return technologyAttack;
+	}
+	
+	
 }

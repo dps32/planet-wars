@@ -129,7 +129,10 @@ public class Battle {
 
 	    updateResourcesLooses();
 	}
+	
+	
 
+	// actualizar el ejercito del planeta
 	public void setPlanetArmy(ArrayList<MilitaryUnit>[] currentArmy) {
 		for (int i = 0; i < 7; i++) {
 			for (MilitaryUnit mu : currentArmy[i]) {
@@ -138,6 +141,7 @@ public class Battle {
 		}
 	}
 
+	// añadir unidades al enemigo
 	public void addEnemyUnit(MilitaryUnit.UnitType type) {
 		switch (type) {
 		case LIGHT_HUNTER:
@@ -313,7 +317,6 @@ public class Battle {
 	    report += "BATTLE NUMBER: " + battleId + nl;
 	    report += "BATTLE STATISTICS" + nl + nl;
 
-	    // Cabecera con separación fija entre planet y enemy
 	    report += String.format("%-22s %6s %6s    %-22s %6s %6s%n",
 	            "Army planet", "Units", "Drops", "Initial Army Enemy", "Units", "Drops");
 
@@ -373,6 +376,10 @@ public class Battle {
 
 	public int[] getWasteMetalDeuterium() {
 		return wasteMetalDeuterium;
+	}
+
+	public ArrayList<MilitaryUnit>[] getEnemyArmy() {
+		return enemyArmy;
 	}
 
 	

@@ -13,7 +13,17 @@ import java.util.TimerTask;
 public class Main implements Variables {
 	private static Planet planet;
 	private static GameUI ui;
+	
+	private static Battle currentBattle;
 	private static int battleId;
+	
+	public static Planet getPlanet() {
+		return planet;
+	}
+	
+	public static Battle getCurrentBattle() {
+		return currentBattle;
+	}
 	
 	public static void main(String[] args) {
 		planet = new Planet(0, 0, 200000, 54000);
@@ -30,6 +40,7 @@ public class Main implements Variables {
 			planet.newMissileLauncher(1);
 			planet.newIonCannon(1);
 			planet.newPlasmaCannon(1);
+			ui.updateTroopsPanel();
 		} catch (ResourceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,6 +57,7 @@ public class Main implements Variables {
 		return new TimerTask() {
 			public void run() {
 				planet.collect();
+				ui.repaintStats();
 			}
 		};
 	}
@@ -58,19 +70,28 @@ public class Main implements Variables {
 				
 				battleId += 1;
 				Battle battle = new Battle(battleId);
+				currentBattle = battle;
 				createEnemyArmy(battle);
+				ui.updateIncomingPanel();
+				
 				battle.enemiesPrint();
+				ui.setAttackingImg();
 
 				// la batalla inicia un minuto después
 				new Timer().schedule(new TimerTask() {
 					public void run() {
 						planet.printStats();
-						battle.setPlanetArmy(planet.getArmy());
-						battle.start();
+						battle.setPlanetArmy(planet.getArmy()); // al inicio ponemos el army del planeta
+						
+						battle.start(); // se hace la batalla
+												
 						System.out.println(battle.getBattleReport(battleId));
 						System.out.println("---------");
 //						System.out.println(battle.getBattleDevelopment());
 						planet.setArmy(battle.getArmies()[0]);
+						
+						ui.updateIncomingPanel(); // UI UPDATE
+						ui.updateTroopsPanel(); // UI UPDATE
 						
 						// si el planeta gana se queda con los restos
 						if (battle.planetWon()) {
@@ -78,7 +99,11 @@ public class Main implements Variables {
 							planet.setDeuterium(planet.getDeuterium() + battle.getWasteMetalDeuterium()[1]);
 						}
 						
+						ui.setNormalImg();
 						planet.printStats();
+						
+						// refrescamos las stats en la ui
+						ui.repaintStats();
 					}
 				}, 6000);
 			}
