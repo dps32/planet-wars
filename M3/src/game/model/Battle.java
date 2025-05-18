@@ -3,6 +3,7 @@ package game.model;
 import java.util.ArrayList;
 import java.util.Random;
 
+import game.application.Database;
 import game.units.*;
 
 public class Battle {
@@ -22,9 +23,10 @@ public class Battle {
 	private int[][] initialArmies; // cantidad de tropas
 	private int[] actualNumberUnitsPlanet, actualNumberUnitsEnemy;
 	private String battleReport = "";
+	private int planetId;
 	private int battleId;
 
-	public Battle(int battleId) {
+	public Battle(int planetId, int battleId) {
 		super();
 		this.enemyArmy = new ArrayList[7];
 		for (int i = 0; i < enemyArmy.length; i++) {
@@ -46,11 +48,12 @@ public class Battle {
 		this.actualNumberUnitsPlanet = new int[7];
 		this.actualNumberUnitsEnemy = new int[7];
 		this.battleDevelopment = "";
+		this.planetId = planetId;
 		this.battleId = battleId;
 	}
 
 	public void start() {
-		System.out.println("Empezando batalla");
+//		System.out.println("Empezando batalla");
 
 		this.armies = new ArrayList[2][7];
 		for (int i = 0; i < 7; i++) {
@@ -62,20 +65,25 @@ public class Battle {
 		this.initialNumberUnitsPlanet = initialFleetNumber(planetArmy);
 		this.initialNumberUnitsEnemy = initialFleetNumber(enemyArmy);
 		initInitialArmies();
-
 		battleLoop();
+		battleDevelopment += getBattleReportSummary();
+		saveBattleToDB();
 	}
 	
+	// Loop de la batalla
 	public void battleLoop() {
 	    boolean attackingPlanet = Math.random() < 0.5;
 
+	    // mientras quede mas del 20% de ambos ejercitos
 	    while (remainderPercentageFleet(planetArmy) > 20 && remainderPercentageFleet(enemyArmy) > 20) {
-	        battleDevelopment += "********************CHANGE ATTACKER********************\n";
+	        battleDevelopment += "********************CHANGE ATTACKER********************\n\n";
 
+	        // si ataca el planeta se escoge el grupo que le toca atacar de su army
 	        int attackerGroup = attackingPlanet ? getPlanetGroupAttacker() : getEnemyGroupAttacker();
 	        ArrayList<MilitaryUnit>[] attackerArmy = attackingPlanet ? planetArmy : enemyArmy;
 	        ArrayList<MilitaryUnit>[] defenderArmy = attackingPlanet ? enemyArmy : planetArmy;
 
+	        // si no hay tropas en el grupo se cambian turnos
 	        if (attackerArmy[attackerGroup].isEmpty()) {
 	            attackingPlanet = !attackingPlanet;
 	            continue;
@@ -83,6 +91,7 @@ public class Battle {
 
 	        MilitaryUnit attacker = attackerArmy[attackerGroup].get((int)(Math.random() * attackerArmy[attackerGroup].size()));
 
+	        // si no hay grupo defensor o el grupo defensor está vacío
 	        int defenderGroup = getGroupDefender(defenderArmy);
 	        if (defenderGroup == -1 || defenderArmy[defenderGroup].isEmpty()) {
 	            attackingPlanet = !attackingPlanet;
@@ -100,6 +109,7 @@ public class Battle {
 	        battleDevelopment += attacker.getClass().getSimpleName() + " generates the damage = " + damage + "\n";
 	        battleDevelopment += defender.getClass().getSimpleName() + " stays with armor = " + defender.getActualArmor() + "\n";
 
+	        // si palma la tropa
 	        if (defender.getActualArmor() <= 0) {
 	            int wasteChance = defender.getChanceGeneratingWaste();
 	            if (Math.random() * 100 < wasteChance) {
@@ -122,9 +132,11 @@ public class Battle {
 	        }
 
 	        int attackAgainChance = attacker.getChanceAttackAgain();
-	        if (Math.random() * 100 >= attackAgainChance) {
+	        if (Math.random() * 100 <= attackAgainChance) {
 	            attackingPlanet = !attackingPlanet;
 	        }
+	        
+	        battleDevelopment += "\n";
 	    }
 
 	    updateResourcesLooses();
@@ -263,6 +275,7 @@ public class Battle {
 		return selectGroupByChance(chances);
 	}
 
+	// seleccion de las unidades dependiendo de sus porcentajes
 	private int selectGroupByChance(int[] chances) {
 	    int rand = (int)(Math.random() * 100) + 1;
 	    int cumulative = 0;
@@ -284,6 +297,7 @@ public class Battle {
 		}
 	}
 
+	// enemigos para debuggear
 	public void enemiesPrint() {
 		System.out.println("Enemy Army");
 		for (ArrayList<MilitaryUnit> units : this.enemyArmy) {
@@ -308,17 +322,16 @@ public class Battle {
 	    return "BATTLE NUMBER: " + battleId + "\nSTART THE BATTLE\n" + battleDevelopment;
 	}
 	
-	public String getBattleReport(int id) {
-	    if (id != battleId) return "Invalid battle ID";
-
+	private String getBattleReportSummary() {
 	    String nl = System.lineSeparator();
-	    String report = "";
-
-	    report += "BATTLE NUMBER: " + battleId + nl;
-	    report += "BATTLE STATISTICS" + nl + nl;
-
-	    report += String.format("%-22s %6s %6s    %-22s %6s %6s%n",
-	            "Army planet", "Units", "Drops", "Initial Army Enemy", "Units", "Drops");
+	    StringBuilder sb = new StringBuilder();
+	    String line = "*".repeat(86) + nl;
+	    
+	    sb.append(nl).append(line);
+	    
+	    sb.append(nl).append("BATTLE STATISTICS").append(nl).append(nl);
+	    sb.append(String.format("%-22s %6s %6s     %-22s %6s %6s%n",
+	            "Army planet", "Units", "Drops", "Initial Army Enemy", "Units", "Drops"));
 
 	    String[] names = {
 	        "Ligth Hunter", "Heavy Hunter", "Battle Ship", "Armored Ship",
@@ -326,44 +339,96 @@ public class Battle {
 	    };
 
 	    for (int i = 0; i < 7; i++) {
-	        // Datos del planeta
-	        report += String.format("%-22s %6d %6d", names[i], initialArmies[0][i], planetDrops[i]);
-	        // Datos del enemigo solo si es nave (0-3)
-	        if (i < 4) {
-	            report += String.format("    %-22s %6d %6d", names[i], initialArmies[1][i], enemyDrops[i]);
-	        }
-	        report += nl;
+	        sb.append(String.format("%-22s %6d %6d", names[i], initialArmies[0][i], planetDrops[i]));
+	        if (i < 4)
+	            sb.append(String.format("     %-22s %6d %6d", names[i], initialArmies[1][i], enemyDrops[i]));
+	        sb.append(nl);
 	    }
 
-	    String line = "*".repeat(86) + nl;
+	    sb.append(nl).append(line);
 
-	    report += nl + line;
-	    report += String.format("%-40s %-40s%n%n", "Cost Army planet", "Cost Army Enemy");
-	    report += String.format("Metal:%12d%28sMetal:%12d%n", initialCostFleet[0][0], "", initialCostFleet[1][0]);
-	    report += String.format("Deuterium:%8d%28sDeuterium:%8d%n", initialCostFleet[0][1], "", initialCostFleet[1][1]);
+	    sb.append(String.format("%-40s %-40s%n%n", "Cost Army planet", "Cost Army Enemy"));
+	    sb.append(String.format("Metal:%12d%28sMetal:%12d%n", initialCostFleet[0][0], "", initialCostFleet[1][0]));
+	    sb.append(String.format("Deuterium:%8d%28sDeuterium:%8d%n", initialCostFleet[0][1], "", initialCostFleet[1][1]));
 
-	    report += nl + line;
-	    report += String.format("%-40s %-40s%n%n", "Losses Army planet", "Losses Army Enemy");
-	    report += String.format("Metal:%12d%28sMetal:%12d%n", resourcesLooses[0][0], "", resourcesLooses[1][0]);
-	    report += String.format("Deuterium:%8d%28sDeuterium:%8d%n", resourcesLooses[0][1], "", resourcesLooses[1][1]);
-	    report += String.format("Weighted:%9d%28sWeighted:%9d%n", resourcesLooses[0][2], "", resourcesLooses[1][2]);
+	    sb.append(nl).append(line);
+	    sb.append(String.format("%-40s %-40s%n%n", "Losses Army planet", "Losses Army Enemy"));
+	    sb.append(String.format("Metal:%12d%28sMetal:%12d%n", resourcesLooses[0][0], "", resourcesLooses[1][0]));
+	    sb.append(String.format("Deuterium:%8d%28sDeuterium:%8d%n", resourcesLooses[0][1], "", resourcesLooses[1][1]));
+	    sb.append(String.format("Weighted:%9d%28sWeighted:%9d%n", resourcesLooses[0][2], "", resourcesLooses[1][2]));
 
-	    report += nl + line;
-	    report += "Waste Generated:" + nl;
-	    report += String.format("Metal       %d%n", wasteMetalDeuterium[0]);
-	    report += String.format("Deuterium   %d%n", wasteMetalDeuterium[1]);
-	    report += nl;
+	    sb.append(nl).append(line);
+	    sb.append("Waste Generated:").append(nl);
+	    sb.append(String.format("Metal       %d%n", wasteMetalDeuterium[0]));
+	    sb.append(String.format("Deuterium   %d%n", wasteMetalDeuterium[1]));
 
+	    sb.append(nl).append(nl);
 	    if (planetWon()) {
-	        report += "Battle won by Planet, we collect rubble";
+	        sb.append("Battle Won by Planet, We Collect Rubble");
 	    } else {
-	        report += "Battle lost, Enemy takes the rubble";
+	        sb.append("Battle Won by Enemy, We Do Not Collect Rubble");
 	    }
 
-	    report += nl + nl + "#".repeat(74) + nl;
+	    sb.append(nl).append(nl).append("#".repeat(74)).append(nl);
+	    return sb.toString();
+	}
 
-	    battleReport = report;
-	    return battleReport;
+	
+	// guardamos la batalla entera en la db
+	public void saveBattleToDB() {
+
+	    ArrayList<Object> stats = new ArrayList<>();
+	    stats.add(planetId);
+	    stats.add(battleId);
+	    stats.add(wasteMetalDeuterium[0]); // metal obtenido
+	    stats.add(wasteMetalDeuterium[1]); // deut obtenido
+
+	    Database.query("INSERT INTO Battle_stats (planet_id, num_battle, resource_metal_acquired, resource_deuterium_acquired) VALUES (?, ?, ?, ?)", stats);
+
+
+	    // ------- tropas del planeta --------
+	    ArrayList<Object> army = new ArrayList<>();
+	    army.add(planetId);
+	    army.add(battleId);
+	    for (int i = 0; i < 4; i++) {
+	        army.add(initialArmies[0][i]);
+	        army.add(planetDrops[i]);
+	    }
+	    Database.query("INSERT INTO Planet_battle_army VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", army);
+
+
+	    // ------ defensas del planeta ------
+	    ArrayList<Object> defense = new ArrayList<>();
+	    defense.add(planetId);
+	    defense.add(battleId);
+	    for (int i = 4; i < 7; i++) {
+	        defense.add(initialArmies[0][i]);
+	        defense.add(planetDrops[i]);
+	    }
+	    Database.query("INSERT INTO Planet_battle_defense VALUES (?, ?, ?, ?, ?, ?, ?, ?)", defense);
+
+	    
+	    // ------- army del enemigo -------
+	    ArrayList<Object> enemy = new ArrayList<>();
+	    enemy.add(planetId);
+	    enemy.add(battleId);
+	    for (int i = 0; i < 4; i++) {
+	        enemy.add(initialArmies[1][i]);
+	        enemy.add(enemyDrops[i]);
+	    }
+	    Database.query("INSERT INTO Enemy_army VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", enemy);
+
+	    
+	    // ------- log de la battle -------
+	    ArrayList<Object> logEntry = new ArrayList<>();
+	    logEntry.add(planetId);
+	    logEntry.add(battleId);
+	    logEntry.add(1);
+	    logEntry.add(battleDevelopment);
+
+	    Database.query("INSERT INTO Battle_log VALUES (?, ?, ?, ?)", logEntry);
+
+
 	}
 	
 	public boolean planetWon() {
