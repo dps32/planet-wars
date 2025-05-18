@@ -15,7 +15,7 @@ function verBatalla() {
 
   Promise.all([
     fetch(xmlPath).then(res => {
-      if (!res.ok) throw new Error('Archivo XML no encontrado');
+      if (!res.ok) throw new Error('Esta batalla aun no ha ocurrido');
       return res.text();
     }),
     fetch('xsl/transformacion.xsl').then(res => res.text())
@@ -35,6 +35,6 @@ function verBatalla() {
     resultado.appendChild(resultDocument);
   })
   .catch(err => {
-    errorEl.textContent = 'Error: ' + err.message;
+    errorEl.textContent = err.message;
   });
 }
