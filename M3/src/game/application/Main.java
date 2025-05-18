@@ -30,8 +30,10 @@ public class Main implements Variables {
 		ui = new GameUI();
 		ui.init();
 		
+		
 		Timer timer = new Timer();
 		
+		// tropas iniciales
 		try {
 			planet.newArmoredShip(1);
 			planet.newBattleShip(1);
@@ -41,14 +43,15 @@ public class Main implements Variables {
 			planet.newIonCannon(1);
 			planet.newPlasmaCannon(1);
 			ui.updateTroopsPanel();
+			ui.repaintStats();
 		} catch (ResourceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
-		timer.schedule(collectResources(), 5000, 10000);
-		timer.schedule(newBattle(), 1000, 200000);
+		timer.schedule(collectResources(), 5000, 20000);
+		timer.schedule(newBattle(), 60000, 180000); // batalla cada 3 minutos prod
 	}
 	
 	
@@ -66,46 +69,50 @@ public class Main implements Variables {
 	private static TimerTask newBattle() {
 		return new TimerTask() {
 			public void run() {
-				System.out.println("Nueva batalla");
+//				System.out.println("Nueva batalla");
 				
 				battleId += 1;
-				Battle battle = new Battle(battleId);
+				Battle battle = new Battle(planet.getPlanetId(), battleId);
 				currentBattle = battle;
 				createEnemyArmy(battle);
 				ui.updateIncomingPanel();
 				
-				battle.enemiesPrint();
+//				battle.enemiesPrint(); // DBG
 				ui.setAttackingImg();
 
 				// la batalla inicia un minuto después
 				new Timer().schedule(new TimerTask() {
 					public void run() {
-						planet.printStats();
+//						planet.printStats(); // DBG
 						battle.setPlanetArmy(planet.getArmy()); // al inicio ponemos el army del planeta
 						
-						battle.start(); // se hace la batalla
-												
-						System.out.println(battle.getBattleReport(battleId));
-						System.out.println("---------");
-//						System.out.println(battle.getBattleDevelopment());
+						battle.start(); // comienza la btalla
+
+						
 						planet.setArmy(battle.getArmies()[0]);
 						
-						ui.updateIncomingPanel(); // UI UPDATE
-						ui.updateTroopsPanel(); // UI UPDATE
-						
+
 						// si el planeta gana se queda con los restos
 						if (battle.planetWon()) {
 							planet.setMetal(planet.getMetal() + battle.getWasteMetalDeuterium()[0]);
 							planet.setDeuterium(planet.getDeuterium() + battle.getWasteMetalDeuterium()[1]);
+							planet.saveResources();
 						}
 						
 						ui.setNormalImg();
-						planet.printStats();
+//						planet.printStats(); // DBG
+						currentBattle = null;
 						
+						ui.updateIncomingPanel(); // UI UPDATE
+						ui.updateTroopsPanel(); // UI UPDATE
+
 						// refrescamos las stats en la ui
 						ui.repaintStats();
+						ui.refreshBattleList();
+						
+//						System.out.println("Batalla terminada");
 					}
-				}, 6000);
+				}, 60000);
 			}
 		};
 	}
@@ -114,7 +121,7 @@ public class Main implements Variables {
 	private static void createEnemyArmy(Battle battle) {
 		int metal = METAL_BASE_ENEMY_ARMY + ENEMY_FLEET_INCREASE * battleId * (METAL_BASE_ENEMY_ARMY / 100);
 		int deuterium = DEUTERIUM_BASE_ENEMY_ARMY + ENEMY_FLEET_INCREASE * battleId * (DEUTERIUM_BASE_ENEMY_ARMY / 100);
-		System.out.println("[ENEMY] Metal: " + metal + " | Deuterium: " + deuterium);
+//		System.out.println("[ENEMY] Metal: " + metal + " | Deuterium: " + deuterium); // DBG
 
 		// mientras el enemigo se pueda permitir el lighthunter generamos unidades
 		while (metal - METAL_COST_LIGTHHUNTER > 0 && deuterium - DEUTERIUM_COST_LIGTHHUNTER > 0) {
@@ -142,12 +149,10 @@ public class Main implements Variables {
 				deuterium -= DEUTERIUM_COST_ARMOREDSHIP;
 			}
 			
-			System.out.println("[ENEMY] Metal: " + metal + " | Deuterium: " + deuterium);
+//			System.out.println("[ENEMY] Metal: " + metal + " | Deuterium: " + deuterium); // DBG1
 		}
 	}
 	
 	
-	public void viewThreat() {
-		
-	}
+	
 }

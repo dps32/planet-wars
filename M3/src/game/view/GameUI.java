@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import game.application.Main;
 import game.exception.ResourceException;
@@ -33,6 +34,7 @@ public class GameUI implements Variables {
 	private int lastMetal = -1;
 	private int lastDeuterium = -1;
 
+	private DefaultListModel<Integer> battleListModel;
 
 	public void init() {
 		frame = new JFrame("Planet Wars");
@@ -144,15 +146,46 @@ public class GameUI implements Variables {
 		incomingPanel = new JPanel(new GridLayout(2, 2));
 		incomingPanel.setBackground(Components.bgColor);
 		incomingPanel.setBorder(Components.titledBorder("Incoming Attack"));
+		incomingPanel.setPreferredSize(new Dimension(250, 140));
 		updateIncomingPanel();
 		rightPanel.add(incomingPanel);
 
-		JPanel reportsPanel = new JPanel();
+		JPanel reportsPanel = new JPanel(new BorderLayout());
 		reportsPanel.setBackground(Components.bgColor);
-		reportsPanel.setBorder(Components.titledBorder("Battle Reports"));
-		JButton btnReports = new JButton("Battle Reports");
-		reportsPanel.add(btnReports);
+		reportsPanel.setBorder(Components.titledBorder("Recent Battles"));
+
+		battleListModel = new DefaultListModel<>();
+		JList<Integer> battleList = new JList<>(battleListModel);
+		battleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+
+		// evento al hacer doble clic
+		battleList.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 2) {
+		            Integer selected = battleList.getSelectedValue();
+		            if (selected == null) return;
+		            showBattleReport(selected);
+		        }
+		    }
+		});
+
+		// cargar batallas recientes
+		loadRecentBattles(battleListModel);
+		
+		battleList.setBackground(Components.bgColor);
+		battleList.setForeground(Components.textColor);
+		battleList.setSelectionBackground(Components.planetBgColor);
+		battleList.setSelectionForeground(Color.WHITE);
+
+		JScrollPane scrollPane = new JScrollPane(battleList);
+		scrollPane.setBackground(Components.bgColor);
+		scrollPane.getViewport().setBackground(Components.bgColor);
+
+
+		reportsPanel.add(scrollPane, BorderLayout.CENTER);
 		rightPanel.add(reportsPanel);
+
 
 		frame.add(rightPanel, BorderLayout.EAST);
 		frame.setVisible(true);
@@ -254,6 +287,8 @@ public class GameUI implements Variables {
 		        repaintStats();
 		        updateTroopsPanel(); // actualizamos la cantidad de tropas
 		    } catch (ResourceException ex) {
+		    	repaintStats();
+		    	updateTroopsPanel(); // actualizamos la cantidad de tropas
 		        showError(ex.getMessage());
 		    } catch (NumberFormatException ex) {
 		        showError("Cantidad no válida.");
@@ -344,6 +379,15 @@ public class GameUI implements Variables {
 	// tropas del enemigo
 	public void updateIncomingPanel() {
 		incomingPanel.removeAll();
+
+		Battle currentBattle = Main.getCurrentBattle();
+		if (currentBattle == null) { // cambiamos el layout para que no se buguee
+			incomingPanel.setLayout(new GridLayout(1,1));
+			incomingPanel.add(Components.label(" ".repeat(15) + "There's no active battle"));
+			incomingPanel.revalidate();
+			incomingPanel.repaint();
+			return;
+		}
 		
 		UnitType[] types = UnitType.values();
 		String[] iconPaths = {
@@ -352,13 +396,9 @@ public class GameUI implements Variables {
 		    "/game/view/img/icon_battle.png",
 		    "/game/view/img/icon_armored.png"
 		};
-
-		Battle currentBattle = Main.getCurrentBattle();
-		if (currentBattle == null) {
-			incomingPanel.add(Components.label("There's no active battle"));
-			return;
-		}
 		
+		// restauramos el layout normal
+		incomingPanel.setLayout(new GridLayout(2, 2));
 		for (int i = 0; i < types.length; i++) {
 			if (i > 3) break;
 			
@@ -403,6 +443,86 @@ public class GameUI implements Variables {
 	private void setPlanetImage(String path) {
 		BufferedImage img = Components.getImage(path);
 		Components.addImage(centerPanel, img);
+	}
+
+	private void loadRecentBattles(DefaultListModel<Integer> model) {
+	    String query = "SELECT num_battle FROM Battle_stats WHERE planet_id = ? ORDER BY num_battle DESC LIMIT 5";
+	    ArrayList<Object> params = new ArrayList<>();
+	    params.add(Main.getPlanet().getPlanetId());
+
+	    try (var conn = java.sql.DriverManager.getConnection("jdbc:mysql://sql7.freesqldatabase.com:3306/sql7779453?useSSL=false", "sql7779453", "vSbpssnPdD");
+	         var ps = conn.prepareStatement(query)) {
+
+	        ps.setInt(1, Main.getPlanet().getPlanetId());
+	        var rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            model.addElement(rs.getInt("num_battle"));
+	        }
+
+	        rs.close();
+	        ps.close();
+
+	    } catch (Exception ex) {
+	        JOptionPane.showMessageDialog(frame, "Error loading recent battles: " + ex.getMessage());
+	    }
+	}
+	
+	private void showBattleReport(int battleId) {
+	    JFrame reportFrame = new JFrame("Battle Report #" + battleId);
+	    reportFrame.setSize(600, 600);
+	    reportFrame.setLocationRelativeTo(null);
+	    reportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+	    JTextArea reportArea = new JTextArea();
+	    reportArea.setEditable(false);
+	    reportArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+	    reportArea.setBackground(Color.BLACK);
+	    reportArea.setForeground(Color.GREEN);
+
+	    // obtener el informe desde la BD
+	    String report = getBattleReportFromDB(battleId);
+	    reportArea.setText(report);
+
+	    JScrollPane scroll = new JScrollPane(reportArea);
+	    reportFrame.add(scroll);
+
+	    reportFrame.setVisible(true);
+	}
+
+	
+	private String getBattleReportFromDB(int battleId) {
+	    StringBuilder sb = new StringBuilder();
+	    String query = "SELECT log_entry FROM Battle_log WHERE planet_id = ? AND num_battle = ? ORDER BY num_line ASC";
+
+	    ArrayList<Object> params = new ArrayList<>();
+	    params.add(Main.getPlanet().getPlanetId());
+	    params.add(battleId);
+
+	    try (
+	        var conn = java.sql.DriverManager.getConnection("jdbc:mysql://sql7.freesqldatabase.com:3306/sql7779453?useSSL=false", "sql7779453", "vSbpssnPdD");
+	        var ps = conn.prepareStatement(query)
+	    ) {
+	        ps.setInt(1, Main.getPlanet().getPlanetId());
+	        ps.setInt(2, battleId);
+
+	        var rs = ps.executeQuery();
+	        while (rs.next()) {
+	            sb.append(rs.getString("log_entry")).append("\n");
+	        }
+
+	        rs.close();
+	        ps.close();
+	    } catch (Exception e) {
+	        sb.append("Error loading report: ").append(e.getMessage());
+	    }
+
+	    return sb.toString();
+	}
+
+	public void refreshBattleList() {
+	    battleListModel.clear();
+	    loadRecentBattles(battleListModel);
 	}
 
 

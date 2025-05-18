@@ -3,6 +3,7 @@ package game.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import game.application.Database;
 import game.exception.ResourceException;
 import game.units.*;
 
@@ -15,6 +16,8 @@ public class Planet implements Variables {
 	private int upgradeAttackTechnologyDeuteriumCost;
 
 	private ArrayList<MilitaryUnit>[] army = new ArrayList[7];
+	private int planetId;
+
 
 	public Planet(int technologyDefense, int technologyAttack, int metal, int deuterium) {
 		super();
@@ -28,8 +31,28 @@ public class Planet implements Variables {
 		for (int i = 0; i < 7; i++) {
 			army[i] = new ArrayList<>();
 		}
+		
+		ArrayList<Object> params = new ArrayList<>();
+		params.add(metal);
+		params.add(deuterium);
+		params.add(technologyDefense);
+		params.add(technologyAttack);
+
+		String insert = "INSERT INTO Planet_stats (resource_metal_amount, resource_deuterium_amount, technology_defense_level, technology_attack_level) VALUES (?, ?, ?, ?)";
+
+		this.planetId = Database.insertAndReturnId(insert, params);
 	}
 
+	public void saveResources() {
+	    String update = "UPDATE Planet_stats SET resource_metal_amount = ?, resource_deuterium_amount = ? WHERE planet_id = ?";
+	    ArrayList<Object> params = new ArrayList<>();
+	    params.add(this.metal);
+	    params.add(this.deuterium);
+	    params.add(this.planetId);
+	    Database.query(update, params);
+	}
+
+	
 	public void upgradeTechnologyDefense() throws ResourceException {
 		if (!canAfford(upgradeDefenseTechnologyDeuteriumCost)) throw new ResourceException("No tienes recursos suficientes");
 
@@ -39,6 +62,7 @@ public class Planet implements Variables {
 		int baseCost = UPGRADE_BASE_DEFENSE_TECHNOLOGY_DEUTERIUM_COST;
 		int plus = UPGRADE_PLUS_DEFENSE_TECHNOLOGY_DEUTERIUM_COST * this.technologyDefense;
 		upgradeDefenseTechnologyDeuteriumCost = baseCost + (baseCost * plus) / 100;
+		saveResources();
 	}
 
 	public void upgradeTechnologyAttack() throws ResourceException {
@@ -50,13 +74,18 @@ public class Planet implements Variables {
 		int baseCost = UPGRADE_BASE_ATTACK_TECHNOLOGY_DEUTERIUM_COST;
 		int plus = UPGRADE_PLUS_ATTACK_TECHNOLOGY_DEUTERIUM_COST * this.technologyAttack;
 		upgradeAttackTechnologyDeuteriumCost = baseCost + (baseCost * plus) / 100;
+		saveResources();
 	}
 
 	public void collect() {
-		System.out.println("Obteniendo recursos");
+//		System.out.println("Obteniendo recursos");
 		this.deuterium += PLANET_DEUTERIUM_GENERATED;
 		this.metal += PLANET_METAL_GENERATED;
+		saveResources();
 	}
+	
+	
+	///////////////////      CREACIÓN DE TROPAS PARA EL PLANETA       ///////////////////////
 
 	public void newLightHunter(int n) throws ResourceException {
 		int built = 0;
@@ -68,9 +97,9 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Light Hunters.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Light Hunters.");
 		}
+		saveResources();
 	}
 
 	public void newHeavyHunter(int n) throws ResourceException {
@@ -83,9 +112,9 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Heavy Hunters.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Heavy Hunters.");
 		}
+		saveResources();
 	}
 
 	public void newBattleShip(int n) throws ResourceException {
@@ -98,9 +127,9 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Battle Ships.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Battle Ships.");
 		}
+		saveResources();
 	}
 
 	public void newArmoredShip(int n) throws ResourceException {
@@ -113,9 +142,9 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Armored Ships.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Armored Ships.");
 		}
+		saveResources();
 	}
 
 	public void newMissileLauncher(int n) throws ResourceException {
@@ -128,9 +157,9 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Missile Launchers.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Missile Launchers.");
 		}
+		saveResources();
 	}
 
 	public void newIonCannon(int n) throws ResourceException {
@@ -143,9 +172,9 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Ion Cannons.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Ion Cannons.");
 		}
+		saveResources();
 	}
 
 	public void newPlasmaCannon(int n) throws ResourceException {
@@ -158,11 +187,19 @@ public class Planet implements Variables {
 			built++;
 		}
 		if (built < n) {
-			System.out.println("Solo se han construido " + built + " Plasma Cannons.");
-			throw new ResourceException();
+			throw new ResourceException("No more resources available. We've built " + built + " Plasma Cannons.");
 		}
+		saveResources();
 	}
+	
+	
+	
+	///// ------------
 
+	
+	
+
+	// debuggear stats del planeta
 	public void printStats() {
 		System.out.println("------ STATS PLANETA ------");
 		System.out.println("Metal: " + metal);
@@ -179,7 +216,10 @@ public class Planet implements Variables {
 		}
 		System.out.println("---------------------------");
 	}
+	
 
+	/// utils y getters/setters
+	
 	private boolean canAfford(int deuterio) {
 		return this.deuterium >= deuterio;
 	}
@@ -219,6 +259,10 @@ public class Planet implements Variables {
 
 	public int getTechnologyAttack() {
 		return technologyAttack;
+	}
+
+	public int getPlanetId() {
+		return planetId;
 	}
 	
 	
