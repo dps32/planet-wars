@@ -371,47 +371,87 @@ footer {
   margin-top: 1rem;
 }
 
+/* REPORTE DE BATALLA */
+.battle-report {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+}
+
+.battle-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.battle-table th, .battle-table td {
+  border: 1px solid #444;
+  padding: 8px;
+  text-align: center;
+}
+
+.battle-table th {
+  background-color: #222;
+}
+
+.section-title {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #00f5d4;
+}
+
+.footer {
+  margin-top: 2rem;
+  font-style: italic;
+  color: #ffd700;
+}
+
 /* MEDIA QUERIES PARA RESPONSIVO */
 @media (max-width: 768px) {
   .nav-wrapper {
     flex-direction: column;
     align-items: center;
+    height: auto;
+    padding: 0.5rem 0;
   }
 
   .nav-block {
-    width: 100%;
-    justify-content: center;
+    flex: none;
+    margin: 0.3rem 0;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    padding: 0.3rem 0.5rem;
   }
 
   .nav-logo {
-    height: 150px;
+    display: none;
   }
 
-  .hero {
-    padding: 3rem 1.5rem;
-  }
-
-  .gallery {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .about-content {
-    padding: 1rem;
-  }
-
+  /* Ajustes para imágenes y equipo en móvil */
   .team {
     flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
   }
 
   .team-member {
-    margin-bottom: 2rem;
+    max-width: 80vw;
+    text-align: center;
   }
 
-  .batallas-content {
-    width: 90%;
+  .team-photo {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #000;
   }
 
-  .tutorial-content {
-    max-width: 100%;
+  .team-member h3 {
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
   }
 }

@@ -38,3 +38,13 @@ function verBatalla() {
     errorEl.textContent = err.message;
   });
 }
+const hamburger = document.getElementById('hamburger');
+const navWrapper = document.getElementById('nav-wrapper');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  navWrapper.classList.toggle('active');
+});
+
+
+
