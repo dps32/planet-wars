@@ -430,7 +430,6 @@ footer {
     display: none;
   }
 
-  /* Ajustes para imágenes y equipo en móvil */
   .team {
     flex-direction: column;
     gap: 1.5rem;
