@@ -4,6 +4,7 @@ Planet wars es un juego en el que tienes que defender tu planeta ante los ataque
 
 ## Info
 - `M1/` - Documentación.
+- `M2/` - Base de datos.
 - `M3/` - Código del juego.
 - `M4/` - Página Web.
 - `M5/` - Diagrama de clases.
