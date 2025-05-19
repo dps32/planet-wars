@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<battles>
+  <battle id="1">
+    <stats>
+      <planetArmy>
+        <unit name="Ligth Hunter" quantity="18" drops="12"/>
+        <unit name="Heavy Hunter" quantity="6" drops="3"/>
+        <unit name="Battle Ship" quantity="2" drops="0"/>
+        <unit name="Armored Ship" quantity="2" drops="1"/>
+        <unit name="Missile Launcher" quantity="10" drops="7"/>
+        <unit name="Ion Cannon" quantity="2" drops="2"/>
+        <unit name="Plasma Cannon" quantity="2" drops="1"/>
+      </planetArmy>
+      <enemyArmy>
+        <unit name="Ligth Hunter" quantity="21" drops="18"/>
+        <unit name="Heavy Hunter" quantity="9" drops="7"/>
+        <unit name="Battle Ship" quantity="2" drops="1"/>
+        <unit name="Armored Ship" quantity="2" drops="1"/>
+      </enemyArmy>
+    </stats>
+    <cost>
+      <planet metal="300000" deuterium="35000"/>
+      <enemy metal="250000" deuterium="30000"/>
+    </cost>
+    <losses>
+      <planet metal="70000" deuterium="2000" weighted="75000"/>
+      <enemy metal="170000" deuterium="12000" weighted="205000"/>
+    </losses>
+    <waste>
+      <metal>67500</metal>
+      <deuterium>1500</deuterium>
+    </waste>
+    <winner>Planet</winner>
+  </battle>
+
+  <battle id="2">
+    <stats>
+      <planetArmy>
+        <unit name="Scout" quantity="7" drops="3"/>
+        <unit name="Destroyer" quantity="4" drops="2"/>
+      </planetArmy>
+      <enemyArmy>
+        <unit name="Scout" quantity="9" drops="5"/>
+        <unit name="Destroyer" quantity="5" drops="2"/>
+      </enemyArmy>
+    </stats>
+    <cost>
+      <planet metal="125000" deuterium="18000"/>
+      <enemy metal="135000" deuterium="17000"/>
+    </cost>
+    <losses>
+      <planet metal="24000" deuterium="900" weighted="25200"/>
+      <enemy metal="30000" deuterium="1000" weighted="32000"/>
+    </losses>
+    <waste>
+      <metal>20000</metal>
+      <deuterium>800</deuterium>
+    </waste>
+    <winner>Enemy</winner>
+  </battle>
+</battles>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<battles>
+  <battle id="1">
+    <stats>
+      <planetArmy>
+        <unit name="Ligth Hunter" quantity="15" drops="10"/>
+        <unit name="Heavy Hunter" quantity="5" drops="2"/>
+        <unit name="Battle Ship" quantity="2" drops="1"/>
+        <unit name="Armored Ship" quantity="1" drops="1"/>
+        <unit name="Missile Launcher" quantity="14" drops="10"/>
+        <unit name="Ion Cannon" quantity="2" drops="1"/>
+        <unit name="Plasma Cannon" quantity="1" drops="0"/>
+      </planetArmy>
+      <enemyArmy>
+        <unit name="Ligth Hunter" quantity="22" drops="19"/>
+        <unit name="Heavy Hunter" quantity="8" drops="6"/>
+        <unit name="Battle Ship" quantity="2" drops="2"/>
+        <unit name="Armored Ship" quantity="1" drops="1"/>
+      </enemyArmy>
+    </stats>
+    <cost>
+      <planet metal="250000" deuterium="32000"/>
+      <enemy metal="200000" deuterium="27000"/>
+    </cost>
+    <losses>
+      <planet metal="60000" deuterium="1500" weighted="64500"/>
+      <enemy metal="150000" deuterium="10000" weighted="190000"/>
+    </losses>
+    <waste>
+      <metal>60000</metal>
+      <deuterium>1200</deuterium>
+    </waste>
+    <winner>Planet</winner>
+  </battle>
+
+  <battle id="2">
+    <stats>
+      <planetArmy>
+        <unit name="Scout" quantity="6" drops="3"/>
+        <unit name="Destroyer" quantity="3" drops="1"/>
+      </planetArmy>
+      <enemyArmy>
+        <unit name="Scout" quantity="10" drops="4"/>
+        <unit name="Destroyer" quantity="4" drops="2"/>
+      </enemyArmy>
+    </stats>
+    <cost>
+      <planet metal="110000" deuterium="17000"/>
+      <enemy metal="130000" deuterium="16000"/>
+    </cost>
+    <losses>
+      <planet metal="22000" deuterium="800" weighted="23500"/>
+      <enemy metal="27000" deuterium="700" weighted="28500"/>
+    </losses>
+    <waste>
+      <metal>18000</metal>
+      <deuterium>600</deuterium>
+    </waste>
+    <winner>Enemy</winner>
+  </battle>
+</battles>
